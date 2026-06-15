@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deteksi Emosi DeepFace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl">
+        <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">Deteksi Emosi 1 Menit</h1>
+        
+        <div class="relative w-full aspect-video bg-black rounded-lg overflow-hidden flex justify-center items-center mb-6">
+            <video id="videoElement" autoplay playsinline muted class="w-full h-full object-cover"></video>
+            <div id="overlay" class="absolute inset-0 bg-black bg-opacity-50 hidden flex-col justify-center items-center text-white z-10">
+                <span id="timerText" class="text-3xl font-bold mb-2">Merekam: 60s</span>
+                <span id="statusText" class="text-sm">Mohon tetap di depan kamera...</span>
+            </div>
+        </div>
+
+        <div class="flex justify-center">
+            <button id="recordBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow transition duration-300">
+                Mulai Merekam
+            </button>
+        </div>
+
+        <div id="resultArea" class="hidden mt-8">
+            <h2 class="text-xl font-bold mb-4 border-b pb-2 text-gray-700">Hasil Analisis</h2>
+            
+            <div class="bg-blue-50 p-4 rounded-lg mb-4 text-center border border-blue-200">
+                <p class="text-sm text-gray-500">Emosi Paling Dominan</p>
+                <p id="dominantEmotion" class="text-3xl font-extrabold text-blue-600 capitalize"></p>
+            </div>
+
+            <div id="emotionBars" class="space-y-3">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        const videoElement = document.getElementById('videoElement');
+        const recordBtn = document.getElementById('recordBtn');
+        const overlay = document.getElementById('overlay');
+        const timerText = document.getElementById('timerText');
+        const statusText = document.getElementById('statusText');
+        const resultArea = document.getElementById('resultArea');
+        const dominantEmotion = document.getElementById('dominantEmotion');
+        const emotionBars = document.getElementById('emotionBars');
+
+        let mediaRecorder;
+        let recordedChunks = [];
+
+        // Inisialisasi Kamera
+        async function initCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                videoElement.srcObject = stream;
+                
+                // Siapkan MediaRecorder
+                mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+                
+                mediaRecorder.ondataavailable = function(e) {
+                    if (e.data.size > 0) {
+                        recordedChunks.push(e.data);
+                    }
+                };
+
+                mediaRecorder.onstop = sendVideoToServer;
+            } catch (err) {
+                alert("Tidak dapat mengakses kamera: " + err.message);
+            }
+        }
+
+        initCamera();
+
+        recordBtn.addEventListener('click', () => {
+            recordedChunks = [];
+            mediaRecorder.start();
+            recordBtn.disabled = true;
+            recordBtn.classList.replace('bg-blue-600', 'bg-gray-400');
+            recordBtn.classList.replace('hover:bg-blue-700', 'hover:bg-gray-400');
+            resultArea.classList.add('hidden');
+            overlay.classList.replace('hidden', 'flex');
+
+            let timeLeft = 60;
+            timerText.innerText = `Merekam: ${timeLeft}s`;
+
+            const timerInterval = setInterval(() => {
+                timeLeft--;
+                timerText.innerText = `Merekam: ${timeLeft}s`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    mediaRecorder.stop();
+                    timerText.innerText = "Memproses...";
+                    statusText.innerText = "Model sedang menganalisis frame, harap tunggu.";
+                }
+            }, 1000);
+        });
+
+        async function sendVideoToServer() {
+            const blob = new Blob(recordedChunks, { type: 'video/webm' });
+            const formData = new FormData();
+            formData.append('video', blob, 'video.webm');
+
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    alert(data.error || "Terjadi kesalahan saat memproses video.");
+                    resetUI();
+                    return;
+                }
+
+                displayResults(data);
+            } catch (err) {
+                alert("Gagal menghubungi server.");
+            }
+            
+            resetUI();
+        }
+
+        function displayResults(data) {
+            dominantEmotion.innerText = data.dominant + ` (${data.percentages[data.dominant]}%)`;
+            emotionBars.innerHTML = '';
+
+            // Tampilkan semua emosi terurut dari yang terbesar
+            const sortedEmotions = Object.entries(data.percentages).sort((a, b) => b[1] - a[1]);
+
+            sortedEmotions.forEach(([emo, percentage]) => {
+                const barHtml = `
+                    <div>
+                        <div class="flex justify-between text-sm mb-1 text-gray-700 font-medium capitalize">
+                            <span>${emo}</span>
+                            <span>${percentage}%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5">
+                            <div class="bg-blue-600 h-2.5 rounded-full" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                `;
+                emotionBars.innerHTML += barHtml;
+            });
+
+            resultArea.classList.remove('hidden');
+        }
+
+        function resetUI() {
+            overlay.classList.replace('flex', 'hidden');
+            recordBtn.disabled = false;
+            recordBtn.classList.replace('bg-gray-400', 'bg-blue-600');
+            recordBtn.classList.replace('hover:bg-gray-400', 'hover:bg-blue-700');
+            recordBtn.innerText = "Rekam Ulang";
+        }
+    </script>
+</body>
+</html>
