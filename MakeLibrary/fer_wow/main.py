@@ -11,6 +11,14 @@ detector = FER(mtcnn=False) # mtcnn=False pakai Haar Cascade (lebih cepat). Ubah
 def index(): 
     return render_template('index.html')
 
+@app.route('/deteksi-fokus', methods=['GET'])
+def deteksi_fokus():
+    return render_template('deteksi-fokus.html')
+
+@app.route('/form-uji', methods=['GET'])
+def form_uji():
+    return render_template('form-uji.html')
+
 @app.route('/analyze', methods=['POST'])
 def analyze_video():
     if 'video' not in request.files: 

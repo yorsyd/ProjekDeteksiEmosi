@@ -6,10 +6,22 @@
     <title>Deteksi Emosi DeepFace</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-800">Analisis Emosi</h1>
+            <ul class="flex gap-6">
+                <li><a href="/" class="text-gray-700 hover:text-blue-600 font-semibold transition">Deteksi Emosi</a></li>
+                <li><a href="/deteksi-fokus" class="text-gray-700 hover:text-blue-600 font-semibold transition">Deteksi Fokus</a></li>
+                <li><a href="/form-uji" class="text-gray-700 hover:text-blue-600 font-semibold transition">Form Uji</a></li>
+            </ul>
+        </div>
+    </nav>
 
-    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl">
-        <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">Deteksi Emosi 1 Menit</h1>
+    <div class="flex-1 flex flex-col items-center justify-center p-4">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl">
+            <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">Deteksi Emosi 1 Menit</h1>
         
         <div class="relative w-full aspect-video bg-black rounded-lg overflow-hidden flex justify-center items-center mb-6">
             <video id="videoElement" autoplay playsinline muted class="w-full h-full object-cover"></video>
