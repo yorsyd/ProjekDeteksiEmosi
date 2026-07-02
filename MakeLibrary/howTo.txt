@@ -1,6 +1,6 @@
 1. Install dulu library yang dibutuhin:
 - DeepFace: pip install Flask deepface opencv-python numpy
-- FER: pip install Flask fer opencv-python tensorflow
+- FER: python -m pip install Flask fer opencv-python tensorflow
 2. Masuk ke terminal dan pada path folder yang sesuai
 3. Jalankan perintah 'python app.py' untuk DeepFace dan 'python main.py' untuk FER.
 4. Masuk ke IP local lewat peramban, dan coba website yang berjalan
