@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import cv2, os, tempfile
 from fer.fer import FER
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='templates', static_url_path='/templates')
 
 # Inisialisasi model FER di awal agar tidak me-load ulang setiap kali request
 detector = FER(mtcnn=False) # mtcnn=False pakai Haar Cascade (lebih cepat). Ubah ke True kalau butuh lebih akurat.
@@ -15,9 +15,25 @@ def index():
 def deteksi_fokus():
     return render_template('deteksi-fokus.html')
 
+@app.route('/deteksi-emosi', methods=['GET'])
+def deteksi_emosi():
+    return render_template('deteksi-emosi.html')
+
 @app.route('/form-uji', methods=['GET'])
 def form_uji():
     return render_template('form-uji.html')
+
+@app.route('/kuesioner-dass', methods=['GET'])
+def kuesioner_dass():
+    return render_template('kuesioner-DASS.html')
+
+@app.route('/kuesioner-afek-negatif', methods=['GET'])
+def kuesioner_afek_negatif():
+    return render_template('kuesioner_SkalaAfekNegatif.html')
+
+@app.route('/kuesioner-afek-positif', methods=['GET'])
+def kuesioner_afek_positif():
+    return render_template('kuesioner_SkalaAfekPositif.html')
 
 @app.route('/analyze', methods=['POST'])
 def analyze_video():

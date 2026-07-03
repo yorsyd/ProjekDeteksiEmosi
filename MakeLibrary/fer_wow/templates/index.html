@@ -1,174 +1,92 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deteksi Emosi DeepFace</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 min-h-screen flex flex-col">
-    <!-- Navbar -->
-    <nav class="bg-white shadow-lg">
-        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-gray-800">Analisis Emosi</h1>
-            <ul class="flex gap-6">
-                <li><a href="/" class="text-gray-700 hover:text-blue-600 font-semibold transition">Deteksi Emosi</a></li>
-                <li><a href="/deteksi-fokus" class="text-gray-700 hover:text-blue-600 font-semibold transition">Deteksi Fokus</a></li>
-                <li><a href="/form-uji" class="text-gray-700 hover:text-blue-600 font-semibold transition">Form Uji</a></li>
-            </ul>
-        </div>
-    </nav>
+    <title>Platform Asesmen Psikologis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  </head>
 
-    <div class="flex-1 flex flex-col items-center justify-center p-4">
-        <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl">
-            <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">Deteksi Emosi 1 Menit</h1>
-        
-        <div class="relative w-full aspect-video bg-black rounded-lg overflow-hidden flex justify-center items-center mb-6">
-            <video id="videoElement" autoplay playsinline muted class="w-full h-full object-cover"></video>
-            <div id="overlay" class="absolute inset-0 bg-black bg-opacity-50 hidden flex-col justify-center items-center text-white z-10">
-                <span id="timerText" class="text-3xl font-bold mb-2">Merekam: 60s</span>
-                <span id="statusText" class="text-sm">Mohon tetap di depan kamera...</span>
-            </div>
-        </div>
+  
+<body>
 
-        <div class="flex justify-center">
-            <button id="recordBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow transition duration-300">
-                Mulai Merekam
-            </button>
-        </div>
+{% include 'partials/header.html' %}
 
-        <div id="resultArea" class="hidden mt-8">
-            <h2 class="text-xl font-bold mb-4 border-b pb-2 text-gray-700">Hasil Analisis</h2>
-            
-            <div class="bg-blue-50 p-4 rounded-lg mb-4 text-center border border-blue-200">
-                <p class="text-sm text-gray-500">Emosi Paling Dominan</p>
-                <p id="dominantEmotion" class="text-3xl font-extrabold text-blue-600 capitalize"></p>
-            </div>
-
-            <div id="emotionBars" class="space-y-3">
-                </div>
-        </div>
+<!-- HOME VIEW -->
+<section class="view active" id="view-home">
+  <div class="wrap">
+    <div class="hero">
+      <div class="eyebrow">Platform Asesmen Kesehatan Mental Siswa SMK</div>
+      <h1>Tiga jenis asesmen, satu sesi.</h1>
+      <p class="lede">Pilih modul yang ingin dijalankan. Setiap modul menangkap sinyal yang berbeda &mdash; laporan psikologi mandiri, ekspresi wajah, dan pola gerak mata &mdash; untuk membentuk gambaran yang lengkap tentang kesehatan mental.</p>
     </div>
 
-    <script>
-        const videoElement = document.getElementById('videoElement');
-        const recordBtn = document.getElementById('recordBtn');
-        const overlay = document.getElementById('overlay');
-        const timerText = document.getElementById('timerText');
-        const statusText = document.getElementById('statusText');
-        const resultArea = document.getElementById('resultArea');
-        const dominantEmotion = document.getElementById('dominantEmotion');
-        const emotionBars = document.getElementById('emotionBars');
+    <div class="grid">
+      <button class="card" data-channel="1" onclick="window.location.href='{{ url_for('form_uji') }}';">
+        <div class="card-top">
+          <span class="ch-code">CH.01</span>
+        </div>
+        <svg class="glyph" viewBox="0 0 220 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polyline points="4,44 4,30 40,30 40,42 76,42 76,18 112,18 112,36 148,36 148,10 184,10 184,26 216,26" stroke="#0f8b8d" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+        </svg>
+        <h3>Kuisioner Psikologi</h3>
+        <p>Skala laporan mandiri untuk mengukur gejala depresi, kecemasan, stres, dan afeksi.</p>
+        <span class="card-cta">Buka modul
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </button>
 
-        let mediaRecorder;
-        let recordedChunks = [];
+      <button class="card" data-channel="2" onclick="window.location.href='{{ url_for('deteksi_emosi') }}';">
+        <div class="card-top">
+          <span class="ch-code">CH.02</span>
+        </div>
+        <svg class="glyph" viewBox="0 0 220 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 40 C 30 40, 30 10, 55 10 S 80 44, 105 44 S 130 14, 155 14 S 180 40, 216 32" stroke="#b8873a" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="55" cy="10" r="2.6" fill="#b8873a"/>
+          <circle cx="105" cy="44" r="2.6" fill="#b8873a"/>
+          <circle cx="155" cy="14" r="2.6" fill="#b8873a"/>
+        </svg>
+        <h3>Deteksi Emosi Citra Wajah</h3>
+        <p>Analisis ekspresi wajah secara visual untuk mengenali indikasi emosi yang tampak.</p>
+        <span class="card-cta">Buka modul
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </button>
 
-        // Inisialisasi Kamera
-        async function initCamera() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-                videoElement.srcObject = stream;
-                
-                // Siapkan MediaRecorder
-                mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
-                
-                mediaRecorder.ondataavailable = function(e) {
-                    if (e.data.size > 0) {
-                        recordedChunks.push(e.data);
-                    }
-                };
+      <button class="card" data-channel="3" onclick="window.location.href='{{ url_for('deteksi_fokus') }}';">
+        <div class="card-top">
+          <span class="ch-code">CH.03</span>
+        </div>
+        <svg class="glyph" viewBox="0 0 220 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 40 L 60 16 L 100 38 L 150 12 L 205 30" stroke="#4a4fd6" stroke-width="1.6" stroke-dasharray="3 5" stroke-linecap="round"/>
+          <circle cx="10" cy="40" r="4" fill="#4a4fd6"/>
+          <circle cx="60" cy="16" r="5.5" fill="#4a4fd6"/>
+          <circle cx="100" cy="38" r="3.5" fill="#4a4fd6"/>
+          <circle cx="150" cy="12" r="6.5" fill="#4a4fd6"/>
+          <circle cx="205" cy="30" r="4" fill="#4a4fd6"/>
+        </svg>
+        <h3>Deteksi Fokus Eye Tracking</h3>
+        <p>Pelacakan pola gerak dan titik fiksasi mata untuk menilai fokus dan atensi.</p>
+        <span class="card-cta">Buka modul
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </button>
+    </div>
+  </div>
+</section>
 
-                mediaRecorder.onstop = sendVideoToServer;
-            } catch (err) {
-                alert("Tidak dapat mengakses kamera: " + err.message);
-            }
-        }
+{% include 'partials/footer.html' %}
 
-        initCamera();
+<script>
+function showView(id){
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+</script>
 
-        recordBtn.addEventListener('click', () => {
-            recordedChunks = [];
-            mediaRecorder.start();
-            recordBtn.disabled = true;
-            recordBtn.classList.replace('bg-blue-600', 'bg-gray-400');
-            recordBtn.classList.replace('hover:bg-blue-700', 'hover:bg-gray-400');
-            resultArea.classList.add('hidden');
-            overlay.classList.replace('hidden', 'flex');
-
-            let timeLeft = 60;
-            timerText.innerText = `Merekam: ${timeLeft}s`;
-
-            const timerInterval = setInterval(() => {
-                timeLeft--;
-                timerText.innerText = `Merekam: ${timeLeft}s`;
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    mediaRecorder.stop();
-                    timerText.innerText = "Memproses...";
-                    statusText.innerText = "Model sedang menganalisis frame, harap tunggu.";
-                }
-            }, 1000);
-        });
-
-        async function sendVideoToServer() {
-            const blob = new Blob(recordedChunks, { type: 'video/webm' });
-            const formData = new FormData();
-            formData.append('video', blob, 'video.webm');
-
-            try {
-                const response = await fetch('/analyze', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const data = await response.json();
-                
-                if (!response.ok) {
-                    alert(data.error || "Terjadi kesalahan saat memproses video.");
-                    resetUI();
-                    return;
-                }
-
-                displayResults(data);
-            } catch (err) {
-                alert("Gagal menghubungi server.");
-            }
-            
-            resetUI();
-        }
-
-        function displayResults(data) {
-            dominantEmotion.innerText = data.dominant + ` (${data.percentages[data.dominant]}%)`;
-            emotionBars.innerHTML = '';
-
-            // Tampilkan semua emosi terurut dari yang terbesar
-            const sortedEmotions = Object.entries(data.percentages).sort((a, b) => b[1] - a[1]);
-
-            sortedEmotions.forEach(([emo, percentage]) => {
-                const barHtml = `
-                    <div>
-                        <div class="flex justify-between text-sm mb-1 text-gray-700 font-medium capitalize">
-                            <span>${emo}</span>
-                            <span>${percentage}%</span>
-                        </div>
-                        <div class="w-full bg-gray-200 rounded-full h-2.5">
-                            <div class="bg-blue-600 h-2.5 rounded-full" style="width: ${percentage}%"></div>
-                        </div>
-                    </div>
-                `;
-                emotionBars.innerHTML += barHtml;
-            });
-
-            resultArea.classList.remove('hidden');
-        }
-
-        function resetUI() {
-            overlay.classList.replace('flex', 'hidden');
-            recordBtn.disabled = false;
-            recordBtn.classList.replace('bg-gray-400', 'bg-blue-600');
-            recordBtn.classList.replace('hover:bg-gray-400', 'hover:bg-blue-700');
-            recordBtn.innerText = "Rekam Ulang";
-        }
-    </script>
 </body>
 </html>

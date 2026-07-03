@@ -153,6 +153,9 @@
 </style>
 </head>
 <body>
+
+{% include 'partials/header.html' %}
+
 <div class="container">
   <h1>Skala Afek Negatif</h1>
   <p class="subtitle">Di bawah ini terdapat sejumlah pernyataan.  Anda diminta untuk mengukur intensitas perasaan selama kurun waktu yang berbeda- beda, yakni dalam kurun waktu <b>"saat ini"</b> dan <b>“biasanya”</bb>. Pilihan jawaban ada empat macam, yakni: <br>
@@ -171,6 +174,8 @@
   <span class="progress" id="progressText">0 / 20 terjawab</span>
   <button type="button" class="submit-btn" id="submitBtn">Kirim Jawaban</button>
 </div>
+
+{% include 'partials/footer.html' %}
 
 <script>
 const questions = [

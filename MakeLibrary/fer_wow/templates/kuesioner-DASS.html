@@ -154,6 +154,8 @@
 </head>
 <body>
 
+{% include 'partials/header.html' %}
+
 <div class="container">
   <h1>Kuisioner DASS-21</h1>
   <p class="subtitle">Pilih salah satu jawaban (0, 1, 2, atau 3) untuk setiap pernyataan di bawah ini yang paling menggambarkan diri Anda <b>satu minggu terakhir</b>.<br>
@@ -173,6 +175,8 @@
   <span class="progress" id="progressText">0 / 21 terjawab</span>
   <button type="button" class="submit-btn" id="submitBtn">Kirim Jawaban</button>
 </div>
+
+{% include 'partials/footer.html' %}
 
 <script>
 const questions = [
